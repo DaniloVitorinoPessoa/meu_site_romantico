@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Isso é pra você, meu amozinho</title>
+    <style>
+      body {
+        background-color: #ffc0cb;
+        font-family: Arial, sans-serif;
+        text-align: center;
+        padding-top: 40px;
+        overflow: hidden;
+      }
+
+      #carrossel img {
+        width: 500px;
+        height: 650px;
+        object-fit: cover;
+        border-radius: 15px;
+        box-shadow: 0px 0px 10px gray;
+      }
+
+      #contador {
+        margin-top: 20px;
+        font-size: 2em;
+        font-weight: bold;
+        color: black;
+      }
+
+      .cora {
+        position: fixed;
+        top: -50px;
+        font-size: 24px;
+        color: red;
+        animation: cair 5s linear infinite;
+      }
+
+      @keyframes cair {
+        0% {
+          transform: translateY(0) rotate(0deg);
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(100vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Eu te amo muito e pra sempre 💖</h1>
+
+    <div id="carrossel">
+      <img
+        id="imagem"
+        src="{{ url_for('static', filename='imagens/' + imagens[0]) }}"
+      />
+    </div>
+
+    <div id="contador"></div>
+
+    <!-- Corações -->
+    <script>
+      function criarCoracao() {
+        const coracao = document.createElement("div");
+        coracao.classList.add("cora");
+        coracao.style.left = Math.random() * 100 + "vw";
+        coracao.style.fontSize = Math.random() * 20 + 20 + "px";
+        coracao.innerHTML = "❤️";
+        document.body.appendChild(coracao);
+
+        setTimeout(() => {
+          coracao.remove();
+        }, 5000);
+      }
+
+      setInterval(criarCoracao, 300);
+    </script>
+
+    <script>
+      // Carrossel
+      const imagens = {{ imagens | tojson }};
+      let index = 0;
+      const imgTag = document.getElementById("imagem");
+
+      setInterval(() => {
+        index = (index + 1) % imagens.length;
+        imgTag.src = "/static/imagens/" + imagens[index];
+      }, 3000);
+
+      // Contador crescente
+      const dataInicial = new Date("{{ data_alvo }}").getTime();
+      const contador = document.getElementById("contador");
+
+      setInterval(() => {
+        const agora = new Date().getTime();
+        const distancia = agora - dataInicial;
+
+        if (distancia < 0) {
+          contador.innerHTML = "A data ainda não chegou!";
+          return;
+        }
+
+        const dias = Math.floor(distancia / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((distancia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((distancia % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((distancia % (1000 * 60)) / 1000);
+
+        contador.innerHTML = `Já se passaram ${dias}d ${horas}h ${minutos}m ${segundos}s desde que eu me tornei a pessoa mais feliz desse mundo 💖`;
+      }, 1000);
+    </script>
+  </body>
+</html>
